@@ -1,28 +1,25 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Login() {
+  const email = useRef();
+  const password = useRef();
 
-  // const [enteredEmail, setEnteredEmail] = useState('');
+  const [emailIsInvalid, setEmailIsInvalid] = useState(false);
 
-  // function handleEmail(event) {
-  //   setEnteredEmail(event.target.value)
-  // }
-
-  const [enteredValues, setEnteredValues] = useState({
-    email: '',
-    password: ''
-  });
-
-  function handleInputChange(identifier, value) {
-    setEnteredValues(prevValues => ({
-      ...prevValues,
-      [identifier]: value
-    }))
-  }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log('submitted', enteredValues);
+    const enteredEmail = email.current.value;
+    const enteredPassword = password.current.value;
+
+    const emailIsValid = enteredEmail.includes("@");
+
+    if (!emailIsValid) {
+      setEmailIsInvalid(true);
+      return;
+    }
+    setEmailIsInvalid(false);
+    console.log("Sending HTTP req...");
   }
 
   return (
@@ -32,12 +29,15 @@ export default function Login() {
       <div className="control-row">
         <div className="control no-margin">
           <label htmlFor="email">Email</label>
-          <input id="email" type="email" name="email" value={enteredValues.email} onChange={(event) => handleInputChange("email", event.target.value)} />
+          <input id="email" type="email" name="email" ref={email} />
+          <div className="control-error">
+            {emailIsInvalid && <p>Please enter valid email address.</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
           <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" value={enteredValues.password} onChange={(event) => handleInputChange('password', event.target.value)} />
+          <input id="password" type="password" name="password" ref={password} />
         </div>
       </div>
 
